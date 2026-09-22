@@ -343,43 +343,47 @@ end
 
 
 local function applyVtxConfig(config_)
-  if not config_ or config_.version == vtxConfigVersion then
-    return
-  end
-  if menuPosition == ITEM_VTX or isItemActive or state ~= IDLE then
-    return
-  end
-  local displayBand = config_.band
-  local displayChannel = config_.channel
-  if getVtxMode() == VTX_MODE_ELRS and displayChannel then
-    displayChannel = displayChannel + 1
-  end
-  fillChannelList(displayBand, displayChannel)
-  vtxConfigVersion = config_.version
-  if config_.power then
-    for i = 1, #powerIds do
-      if powerIds[i] == config_.power then
-        menu[ITEM_POWER].pos = i
-        break
-      end
+    if not config_ or config_.version == vtxConfigVersion then
+        return
     end
-  end
+    if menuPosition == ITEM_VTX or isItemActive or state ~= IDLE then
+        return
+    end
+    local displayBand = config_.band
+    local displayChannel = config_.channel
+    if getVtxMode() == VTX_MODE_ELRS and displayChannel then
+        displayChannel = displayChannel + 1
+    end
+    fillChannelList(displayBand, displayChannel)
+    vtxConfigVersion = config_.version
+    if config_.power then
+        for i = 1, #powerIds do
+            if powerIds[i] == config_.power then
+                menu[ITEM_POWER].pos = i
+                break
+            end
+        end
+    end
 end
 
+
+
 local function prepareVtxArgs()
-  local currentVtx = menu[ITEM_VTX].values[menu[ITEM_VTX].pos]
-  local sendBand = currentVtx and currentVtx[1] or nil
-  local sendChannel = currentVtx and currentVtx[2] or nil
-  if getVtxMode() == VTX_MODE_ELRS and sendChannel then
-    sendChannel = sendChannel - 1
-  end
-  return {
-    band = sendBand,
-    channel = sendChannel,
-    power = menu[ITEM_POWER].values[menu[ITEM_POWER].pos],
-    vtxMode = getVtxMode()
-  }
+    local currentVtx = menu[ITEM_VTX].values[menu[ITEM_VTX].pos]
+    local sendBand = currentVtx and currentVtx or nil
+    local sendChannel = currentVtx and currentVtx or nil
+    if getVtxMode() == VTX_MODE_ELRS and sendChannel then
+        sendChannel = sendChannel - 1
+    end
+    return {
+        band = sendBand,
+        channel = sendChannel,
+        power = menu[ITEM_POWER].values[menu[ITEM_POWER].pos],
+        vtxMode = getVtxMode()
+    }
 end
+
+
 
 local function sendElrsVtxConfig()
   local args = prepareVtxArgs()
@@ -420,6 +424,7 @@ local function processEnterPress()
     com.sendVtxConfig(args)
   end
 end
+
 
 local function run_func(event, telemetryScreen)
   com.mainLoop(getVtxMode())
